@@ -23,7 +23,7 @@ pub enum Shape {
 
 
 pub struct Tetromino {
-    position: Vec2, // top left of self.squares[0]
+    position: Vec2, // center as shown in `SRS-pieces.webp`
     segments: [Square; 4],
     shape: Shape,
 }
@@ -91,10 +91,10 @@ impl Tetromino {
         }
     }
     pub fn new_S(x: f32, y: f32) -> Tetromino {
-        let square_0 = Square::new(x - 0.5 * SEGMENT_SIZE, y - 1.5 * SEGMENT_SIZE, SEGMENT_SIZE);
-        let square_1 = Square::new(square_0.right(),             square_0.top(),    SEGMENT_SIZE);
-        let square_2 = Square::new(square_0.left() - square_0.w, square_0.bottom(), SEGMENT_SIZE);
-        let square_3 = Square::new(square_2.right(),             square_1.bottom(), SEGMENT_SIZE);
+        let square_0 = Square::new(x - 0.5 * SEGMENT_SIZE,       y - 1.5 * SEGMENT_SIZE, SEGMENT_SIZE);
+        let square_1 = Square::new(square_0.right(),             square_0.top(),         SEGMENT_SIZE);
+        let square_2 = Square::new(square_0.left() - square_0.w, square_0.bottom(),      SEGMENT_SIZE);
+        let square_3 = Square::new(square_2.right(),             square_1.bottom(),      SEGMENT_SIZE);
 
         Tetromino { 
             position: vec2(x, y),
@@ -104,9 +104,9 @@ impl Tetromino {
     }
     pub fn new_Z(x: f32, y: f32) -> Tetromino {
         let square_0 = Square::new(x - 1.5 * SEGMENT_SIZE, y - 1.5 * SEGMENT_SIZE, SEGMENT_SIZE);
-        let square_1 = Square::new(square_0.right(), square_0.top(),    SEGMENT_SIZE);
-        let square_2 = Square::new(square_1.left(),  square_1.bottom(), SEGMENT_SIZE);
-        let square_3 = Square::new(square_2.right(), square_1.bottom(), SEGMENT_SIZE);
+        let square_1 = Square::new(square_0.right(),       square_0.top(),         SEGMENT_SIZE);
+        let square_2 = Square::new(square_1.left(),        square_1.bottom(),      SEGMENT_SIZE);
+        let square_3 = Square::new(square_2.right(),       square_1.bottom(),      SEGMENT_SIZE);
 
 
         Tetromino {
