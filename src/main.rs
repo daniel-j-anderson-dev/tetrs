@@ -27,8 +27,14 @@ async fn main() {
         if is_key_pressed(KeyCode::Z) {
             piece.rotate_right();
         }
+        if is_key_down(KeyCode::Z) {
+            draw_text("Z: Clockwise Rotation", screen_width()  / 2.5, screen_height() / 2.5, 10.0, BLACK);
+        }
         if is_key_pressed(KeyCode::X) {
             piece.rotate_left();
+        }
+        if is_key_down(KeyCode::X) {
+            draw_text("X: Counter-clockwise Rotation", screen_width() / 2.5, screen_height() / 2.5, 10.0, BLACK);
         }
 
         // draw piece
@@ -37,4 +43,8 @@ async fn main() {
 
         next_frame().await;
     }
+}
+
+fn display_text(text: &str, position: Vec2) {
+    
 }
