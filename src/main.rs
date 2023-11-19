@@ -3,7 +3,7 @@ mod square;
 mod tetromino;
 
 use macroquad::prelude::*;
-use tetromino::Tetromino;
+pub use tetromino::Tetromino;
 
 #[macroquad::main("tetrs")]
 async fn main() {
@@ -43,8 +43,4 @@ async fn main() {
 
         next_frame().await;
     }
-}
-
-fn display_text(text: &str, position: Vec2) {
-    
 }
