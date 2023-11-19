@@ -31,7 +31,7 @@ async fn main() {
             draw_text("Z: Clockwise Rotation", screen_width()  / 2.5, screen_height() / 2.5, 10.0, BLACK);
         }
         if is_key_pressed(KeyCode::X) {
-            piece.rotate(falsez);
+            piece.rotate(false);
         }
         if is_key_down(KeyCode::X) {
             draw_text("X: Counter-clockwise Rotation", screen_width() / 2.5, screen_height() / 2.5, 10.0, BLACK);
