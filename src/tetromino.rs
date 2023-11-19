@@ -166,32 +166,39 @@ impl Tetromino {
             sq.y += sq.h;
         }
     }
-    pub fn rotate_left(&mut self) {
-        for sq in self.segments.iter_mut() {
-            let relative_x = sq.x + 0.5 * sq.w - self.position.x;
-            let relative_y = sq.y + 0.5 * sq.h - self.position.y;
+    pub fn rotate_ccw(&mut self) {
+        for square in self.segments.iter_mut() {
+            let segment_center = vec2(
+                square.x + 0.5 * SEGMENT_SIZE,
+                square.y + 0.5 * SEGMENT_SIZE,
+            );
 
-            // Perform a 90-degree counterclockwise rotation
-            let new_relative_x = -relative_y;
-            let new_relative_y = relative_x;
+            // account for position
+            let difference = segment_center - self.position;
 
-            // Update the square's position based on the new relative coordinates
-            sq.x = self.position.x + new_relative_x - 0.5 * sq.w;
-            sq.y = self.position.y + new_relative_y - 0.5 * sq.h;
+            // Perform a 90-degree counterclockwise rotation (x, y) -> (-y, x)
+            let rotated = vec2(-difference.y, difference.x) + self.position; // account for position
+
+            // Set the square to the roated position acounting for the center
+            square.x = rotated.x - 0.5 * SEGMENT_SIZE;
+            square.y = rotated.y - 0.5 * SEGMENT_SIZE;
         }
     }
-    pub fn rotate_right(&mut self) {
-        for sq in self.segments.iter_mut() {
-            let relative_x = sq.x + 0.5 * sq.w - self.position.x;
-            let relative_y = sq.y + 0.5 * sq.h - self.position.y;
+    pub fn rotate_cw(&mut self) {
+        for square in self.segments.iter_mut() {
+            let segment_center = vec2( // square st
+                square.x + 0.5 * SEGMENT_SIZE,
+                square.y + 0.5 * SEGMENT_SIZE,
+            );
 
-            // Perform a 90-degree clockwise rotation
-            let new_relative_x = relative_y;
-            let new_relative_y = -relative_x;
+            let difference = segment_center - self.position;
+
+            // Perform a 90-degree clockwise rotation (x, y) -> (y, -x)
+            let rotated = vec2(difference.y, -difference.x) + self.position; // account for position
 
             // Update the square's position based on the new relative coordinates
-            sq.x = self.position.x + new_relative_x - 0.5 * sq.w;
-            sq.y = self.position.y + new_relative_y - 0.5 * sq.h;
+            square.x = rotated.x - 0.5 * SEGMENT_SIZE;
+            square.y = rotated.y - 0.5 * SEGMENT_SIZE;
         }
     }
 
