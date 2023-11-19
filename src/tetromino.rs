@@ -166,35 +166,25 @@ impl Tetromino {
             sq.y += sq.h;
         }
     }
-    pub fn rotate_ccw(&mut self) {
-        for square in self.segments.iter_mut() {
-            let segment_center = vec2(
-                square.x + 0.5 * SEGMENT_SIZE,
-                square.y + 0.5 * SEGMENT_SIZE,
-            );
-
-            // account for position
-            let difference = segment_center - self.position;
-
-            // Perform a 90-degree counterclockwise rotation (x, y) -> (-y, x)
-            let rotated = vec2(-difference.y, difference.x) + self.position; // account for position
-
-            // Set the square to the roated position acounting for the center
-            square.x = rotated.x - 0.5 * SEGMENT_SIZE;
-            square.y = rotated.y - 0.5 * SEGMENT_SIZE;
-        }
-    }
-    pub fn rotate_cw(&mut self) {
+    pub fn rotate(&mut self, clock_wise: bool) {
         for square in self.segments.iter_mut() {
             let segment_center = vec2( // square st
                 square.x + 0.5 * SEGMENT_SIZE,
                 square.y + 0.5 * SEGMENT_SIZE,
             );
 
-            let difference = segment_center - self.position;
+            let difference = segment_center - self.position; // account for position
 
-            // Perform a 90-degree clockwise rotation (x, y) -> (y, -x)
-            let rotated = vec2(difference.y, -difference.x) + self.position; // account for position
+            let rotated = if clock_wise {
+                // Perform a 90-degree clockwise rotation (x, y) -> (y, -x)
+                vec2(difference.y, -difference.x)
+            }
+            else {
+                // Perform a 90-degree counterclockwise rotation (x, y) -> (-y, x)
+                vec2(-difference.y, difference.x)
+            };
+            
+            let rotated = rotated + self.position; // account for position
 
             // Update the square's position based on the new relative coordinates
             square.x = rotated.x - 0.5 * SEGMENT_SIZE;
