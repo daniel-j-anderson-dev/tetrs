@@ -1,4 +1,4 @@
-use macroquad::prelude::*;
+use macroquad::math::Rect;
 
 pub struct Square(Rect);
 impl Square {
