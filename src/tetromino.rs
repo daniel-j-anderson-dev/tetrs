@@ -117,7 +117,8 @@ impl Tetromino {
         }
     }
     pub fn random_at(x: f32, y: f32) -> Tetromino {
-        match RandomRange::gen_range(0, 7) {
+        rand::srand(macroquad::miniquad::date::now() as _);
+        match rand() % 7 {
             0 => Tetromino::new_I(x, y),
             1 => Tetromino::new_O(x, y),
             2 => Tetromino::new_T(x, y),
