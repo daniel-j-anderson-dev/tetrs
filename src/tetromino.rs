@@ -1,6 +1,6 @@
 use macroquad::{
     prelude::*,
-    rand::rand,
+    rand::{rand, RandomRange},
 };
 
 use crate::square::Square;
@@ -10,7 +10,7 @@ pub const SEGMENT_BORDER_COLOR: Color = BLACK;
 pub const SEGMENT_BORDER_SIZE: f32 = 1.0;
 
 /// https://en.wikipedia.org/wiki/Tetromino#One-sided_tetrominoes
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Shape {
     I,
     O,
@@ -22,6 +22,7 @@ pub enum Shape {
 }
 
 
+#[derive(Debug, PartialEq)]
 pub struct Tetromino {
     position: Vec2, // center as shown in `SRS-pieces.webp`
     segments: [Square; 4],
@@ -44,9 +45,9 @@ impl Tetromino {
     }
     pub fn new_O(x: f32, y: f32) -> Tetromino {
         let square_0 = Square::new(x - SEGMENT_SIZE, y - SEGMENT_SIZE, SEGMENT_SIZE);
-        let square_1 = Square::new(square_0.right(), square_0.top(),               SEGMENT_SIZE);
-        let square_2 = Square::new(square_0.left(),  square_0.bottom(), SEGMENT_SIZE);
-        let square_3 = Square::new(square_1.left(),  square_1.bottom(), SEGMENT_SIZE);
+        let square_1 = Square::new(square_0.right(), square_0.top(), SEGMENT_SIZE);
+        let square_2 = Square::new(square_0.left(), square_0.bottom(), SEGMENT_SIZE);
+        let square_3 = Square::new(square_0.right(), square_0.bottom(), SEGMENT_SIZE);
 
         Tetromino {
             shape: Shape::O,
@@ -57,8 +58,8 @@ impl Tetromino {
     pub fn new_T(x: f32, y: f32) -> Tetromino {
         let square_0 = Square::new(x -0.5 * SEGMENT_SIZE, y -1.5 * SEGMENT_SIZE, SEGMENT_SIZE);
         let square_1 = Square::new(square_0.left(), square_0.bottom(), SEGMENT_SIZE);
-        let square_2 = Square::new(square_1.right(), square_1.top(), SEGMENT_SIZE);
-        let square_3 = Square::new(square_1.left() - SEGMENT_SIZE,  square_1.top(), SEGMENT_SIZE);
+        let square_2 = Square::new(square_1.right(), square_1.top(), SEGMENT_SIZE); 
+        let square_3 = Square::new(square_1.left() - SEGMENT_SIZE,  square_1.top(), SEGMENT_SIZE); 
 
         Tetromino {
             shape: Shape::T,
@@ -67,7 +68,7 @@ impl Tetromino {
         }
     }
     pub fn new_J(x: f32, y: f32) -> Tetromino {
-        let square_0 = Square::new(x -1.5 * SEGMENT_SIZE, y -1.5 * SEGMENT_SIZE, SEGMENT_SIZE);
+        let square_0 = Square::new(x -1.5 * SEGMENT_SIZE, y -1.5 * SEGMENT_SIZE, SEGMENT_SIZE); 
         let square_1 = Square::new(square_0.left(), square_0.bottom(), SEGMENT_SIZE);
         let square_2 = Square::new(square_1.right(), square_1.top(), SEGMENT_SIZE);
         let square_3 = Square::new(square_2.right(), square_2.top(), SEGMENT_SIZE);
@@ -79,10 +80,10 @@ impl Tetromino {
         }
     }
     pub fn new_L(x: f32, y: f32) -> Tetromino {
-        let square_0 = Square::new(x - 1.5 * SEGMENT_SIZE, y - 0.5 * SEGMENT_SIZE, SEGMENT_SIZE);
+        let square_0 = Square::new(x - 1.5 * SEGMENT_SIZE, y - 0.5 * SEGMENT_SIZE, SEGMENT_SIZE); 
         let square_1 = Square::new(square_0.right(), square_0.top(),SEGMENT_SIZE);
         let square_2 = Square::new(square_1.right(), square_1.top(), SEGMENT_SIZE);
-        let square_3 = Square::new(square_2.left(), square_2.top() - SEGMENT_SIZE, SEGMENT_SIZE);
+        let square_3 = Square::new(square_2.left(), square_2.top() - SEGMENT_SIZE, SEGMENT_SIZE); 
 
         Tetromino { 
             position: vec2(x, y),
@@ -92,8 +93,8 @@ impl Tetromino {
     }
     pub fn new_S(x: f32, y: f32) -> Tetromino {
         let square_0 = Square::new(x - 0.5 * SEGMENT_SIZE, y - 1.5 * SEGMENT_SIZE, SEGMENT_SIZE);
-        let square_1 = Square::new(square_0.right(), square_0.top(), SEGMENT_SIZE);
-        let square_2 = Square::new(square_0.left() - square_0.w, square_0.bottom(), SEGMENT_SIZE);
+        let square_1 = Square::new(square_0.right(), square_0.top(), SEGMENT_SIZE); 
+        let square_2 = Square::new(square_0.left() - SEGMENT_SIZE, square_0.bottom(), SEGMENT_SIZE); 
         let square_3 = Square::new(square_2.right(), square_1.bottom(), SEGMENT_SIZE);
 
         Tetromino { 
@@ -103,10 +104,10 @@ impl Tetromino {
         }
     }
     pub fn new_Z(x: f32, y: f32) -> Tetromino {
-        let square_0 = Square::new(x - 1.5 * SEGMENT_SIZE, y - 1.5 * SEGMENT_SIZE, SEGMENT_SIZE);
+        let square_0 = Square::new(x - 1.5 * SEGMENT_SIZE, y - 1.5 * SEGMENT_SIZE, SEGMENT_SIZE); 
         let square_1 = Square::new(square_0.right(), square_0.top(), SEGMENT_SIZE);
         let square_2 = Square::new(square_1.left(), square_1.bottom(), SEGMENT_SIZE);
-        let square_3 = Square::new(square_2.right(), square_1.bottom(), SEGMENT_SIZE);
+        let square_3 = Square::new(square_2.right(), square_1.bottom(), SEGMENT_SIZE); 
 
 
         Tetromino {
@@ -115,8 +116,8 @@ impl Tetromino {
             segments: [square_0, square_1, square_2, square_3],
         }
     }
-    pub fn random(x: f32, y: f32) -> Tetromino {
-        match rand() % 7 {
+    pub fn random_at(x: f32, y: f32) -> Tetromino {
+        match RandomRange::gen_range(0, 7) {
             0 => Tetromino::new_I(x, y),
             1 => Tetromino::new_O(x, y),
             2 => Tetromino::new_T(x, y),
@@ -127,8 +128,8 @@ impl Tetromino {
             _ => Tetromino::new_I(x, y),
         }
     }
-    pub fn random_at_origin() -> Tetromino {
-        Tetromino::random(0.0, 0.0)
+    pub fn random() -> Tetromino {
+        Tetromino::random_at((rand() % 10)as f32, (rand() % 20) as f32)
     }
 }
 
@@ -140,31 +141,94 @@ impl Tetromino {
     pub fn squares(&self) -> &[Square] {
         &self.segments
     }
+    pub fn position(&self) -> &Vec2 {
+        &self.position
+    }
+    pub fn top(&self) -> f32 {
+        let mut top_most = self.segments[0].top();
+        for square in self.segments.iter() {
+            if square.top() < top_most {
+                top_most = square.right();
+            }
+        }
+        top_most        
+    }
+    pub fn bottom(&self) -> f32 {
+        let mut bottom_most = self.segments[0].bottom();
+        for square in self.segments.iter() {
+            if square.bottom() > bottom_most {
+                bottom_most = square.bottom()
+            }
+        }
+        bottom_most
+    }
+    pub fn left(&self) -> f32 {
+        let mut left_most = self.segments[0].left();
+        for square in self.segments.iter() {
+            if square.left() < left_most {
+                left_most = square.left()
+            }
+        }
+        left_most
+    }
+    pub fn right(&self) -> f32 {
+        let mut right_most = self.segments[0].right();
+        for square in self.segments.iter() {
+            if square.right() > right_most {
+                right_most = square.right();
+            }
+        }
+        right_most        
+    }
 }
 
 // setters
 impl Tetromino {
-    pub fn set_position(&mut self, position: Vec2) {
-        self.position = position;
+    pub fn add_position(&mut self, position: Vec2) {
+        for square in self.segments.iter_mut() {
+            square.x += position.x;
+            square.y += position.y;
+        }
+        self.position += position;
     }
+
 }
 
 // actions
 impl Tetromino {
+    pub fn check_collision(&self, other: &Tetromino) -> bool {
+        for self_seg in self.segments.iter() {
+            for other_seg in other.segments.iter() {
+                if self_seg == other_seg {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     pub fn move_left(&mut self) {
         for sq in self.segments.iter_mut() {
-            sq.x -= sq.w;
+            sq.x -= SEGMENT_SIZE;
         }
+        self.position.x -= SEGMENT_SIZE;
     }
     pub fn move_right(&mut self) {
         for sq in self.segments.iter_mut() {
-            sq.x += sq.w;
+            sq.x += SEGMENT_SIZE;
         }
+        self.position.x += SEGMENT_SIZE;
     }
     pub fn move_down(&mut self) {
         for sq in self.segments.iter_mut() {
-            sq.y += sq.h;
+            sq.y += SEGMENT_SIZE;
         }
+        self.position.y += SEGMENT_SIZE;
+    }
+    pub fn move_up(&mut self) {
+        for sq in self.segments.iter_mut() {
+            sq.y -= SEGMENT_SIZE;
+        }
+        self.position.y -= SEGMENT_SIZE;
     }
     pub fn rotate(&mut self, clock_wise: bool) {
         for square in self.segments.iter_mut() {
