@@ -184,17 +184,30 @@ impl Tetromino {
 
 // setters
 impl Tetromino {
-    pub fn add_position(&mut self, position: Vec2) {
+    pub fn add_position(&mut self, delta: Vec2) {
+        for square in self.segments.iter_mut() {
+            square.x += delta.x;
+            square.y += delta.y;
+        }
+        self.position += delta;
+    }
+    pub fn set_position(&mut self, position: Vec2) {
         for square in self.segments.iter_mut() {
             square.x += position.x;
             square.y += position.y;
         }
-        self.position += position;
+        self.position = position;
     }
-
 }
 
 // actions
+fn rotate_point(clockwise: bool, point: Vec2) -> Vec2 {
+    if clockwise {
+        vec2(point.y, -point.x)
+    } else {
+        vec2(-point.y, point.x)
+    }
+}
 impl Tetromino {
     pub fn check_collision(&self, other: &Tetromino) -> bool {
         for self_seg in self.segments.iter() {
@@ -207,30 +220,18 @@ impl Tetromino {
         return false;
     }
     pub fn move_left(&mut self) {
-        for sq in self.segments.iter_mut() {
-            sq.x -= SEGMENT_SIZE;
-        }
-        self.position.x -= SEGMENT_SIZE;
+        self.add_position(vec2(-SEGMENT_SIZE, 0.0));
     }
     pub fn move_right(&mut self) {
-        for sq in self.segments.iter_mut() {
-            sq.x += SEGMENT_SIZE;
-        }
-        self.position.x += SEGMENT_SIZE;
+        self.add_position(vec2(SEGMENT_SIZE, 0.0));
     }
     pub fn move_down(&mut self) {
-        for sq in self.segments.iter_mut() {
-            sq.y += SEGMENT_SIZE;
-        }
-        self.position.y += SEGMENT_SIZE;
+        self.add_position(vec2(0.0, SEGMENT_SIZE));
     }
     pub fn move_up(&mut self) {
-        for sq in self.segments.iter_mut() {
-            sq.y -= SEGMENT_SIZE;
-        }
-        self.position.y -= SEGMENT_SIZE;
+        self.add_position(vec2(0.0, -SEGMENT_SIZE));
     }
-    pub fn rotate(&mut self, clock_wise: bool) {
+    pub fn rotate(&mut self, clockwise: bool) {
         for square in self.segments.iter_mut() {
             let segment_center = vec2( // square st
                 square.x + 0.5 * SEGMENT_SIZE,
@@ -239,14 +240,7 @@ impl Tetromino {
 
             let difference = segment_center - self.position; // account for position
 
-            let rotated = if clock_wise {
-                // Perform a 90-degree clockwise rotation (x, y) -> (y, -x)
-                vec2(difference.y, -difference.x)
-            }
-            else {
-                // Perform a 90-degree counterclockwise rotation (x, y) -> (-y, x)
-                vec2(-difference.y, difference.x)
-            };
+            let rotated = rotate_point(clockwise, difference);
             
             let rotated = rotated + self.position; // account for position
 
