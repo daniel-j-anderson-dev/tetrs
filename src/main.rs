@@ -15,7 +15,7 @@ async fn main() {
     let mut falling_piece = Tetromino::random();
     let bounds = board.bounds();
     let x_mid = (bounds.right() - bounds.left()) / 2.0;
-    falling_piece.set_position(vec2(bounds.left() + x_mid, bounds.top() + SEGMENT_SIZE));
+    falling_piece.add_position(vec2(bounds.left() + x_mid, bounds.top() + SEGMENT_SIZE));
 
 
     loop {
@@ -33,6 +33,8 @@ async fn main() {
         if is_key_pressed(KeyCode::Z) {
             falling_piece.rotate(true);
         }
+
+        board.keep_in_bounds(&mut falling_piece);
 
         board.draw();
         falling_piece.draw();

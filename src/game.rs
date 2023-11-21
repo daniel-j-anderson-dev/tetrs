@@ -30,7 +30,7 @@ impl Game {
         let bounds = self.board.bounds();
         let top_middle = vec2((bounds.right() - bounds.left()) / 2.0, bounds.top() + SEGMENT_SIZE);
         self.current_piece = Tetromino::random();
-        self.current_piece.set_position(top_middle);
+        self.current_piece.add_position(top_middle);
     }
     pub fn update(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         Ok(())
