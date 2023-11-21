@@ -27,45 +27,28 @@ impl std::default::Default for Board {
     }
 }
 impl Board {
-    // if piece is out of bounds this returns the portion that is out of bounds
-    // otherwise None
-    pub fn check_is_bounds(&self, piece: Tetromino) -> Option<Rect> {
-        for square in piece.squares() {
-            if square.bottom() > self.bounds.bottom() {
-                return Some(Rect { 
-                    x: square.left(),
-                    y: self.bounds.bottom(),
-                    w: square.w,
-                    h: (square.bottom() - self.bounds.bottom()).abs(),
-                });
-            }
-            if square.top() < self.bounds.top() {
-                return Some(Rect { 
-                    x: square.left(),
-                    y: square.top(),
-                    w: square.w,
-                    h: (square.top() - self.bounds.top()).abs(),
-                });
-            }
-            if  square.left() < self.bounds.left() {
-                return Some(Rect { 
-                    x: square.left(),
-                    y: square.top(),
-                    w: (square.left() - self.bounds.left()).abs(),
-                    h: square.h,
-                });
-            }
-            if square.right() > self.bounds.right() {
-                return Some(Rect { 
-                    x: self.bounds.right(),
-                    y: square.top(),
-                    w: (square.right() - self.bounds.right()).abs(),
-                    h: square.h,
-                });
-            }
+
+    pub fn keep_in_bounds(&self, piece: &mut Tetromino) {
+        let top = piece.top();
+        let left = piece.left();
+        let bottom = piece.bottom();
+        let right = piece.right();
+
+        if top < self.bounds.top() {
+            piece.add_position(vec2(0.0, self.bounds.top() - top));
         }
 
-        None
+        if left < self.bounds.left() {
+            piece.add_position(vec2(self.bounds.left() - left, 0.0));
+        }
+
+        if bottom > self.bounds.bottom() {
+            piece.add_position(vec2(0.0, self.bounds.bottom() - bottom));
+        }
+
+        if right > self.bounds.right() {
+            piece.add_position(vec2(self.bounds.right() - right, 0.0));
+        }
     }
     pub fn clear_lines(&mut self) -> Option<usize> {
         todo!();
