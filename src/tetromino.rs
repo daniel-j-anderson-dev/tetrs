@@ -130,7 +130,7 @@ impl Tetromino {
         }
     }
     pub fn random() -> Tetromino {
-        Tetromino::random_at((rand() % 10)as f32, (rand() % 20) as f32)
+        Tetromino::random_at(0.0, 0.0)
     }
 }
 
