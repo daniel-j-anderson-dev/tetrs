@@ -1,5 +1,6 @@
 use macroquad::math::Rect;
 
+#[derive(Debug, PartialEq)]
 pub struct Square(Rect);
 impl Square {
     pub fn new(x: f32, y: f32, size: f32) -> Square {
