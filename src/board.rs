@@ -29,25 +29,25 @@ impl std::default::Default for Board {
 impl Board {
 
     pub fn keep_in_bounds(&self, piece: &mut Tetromino) {
-        let top = piece.top();
-        let left = piece.left();
-        let bottom = piece.bottom();
-        let right = piece.right();
+        let piece_top = piece.top();
+        let piece_left = piece.left();
+        let piece_bottom = piece.bottom();
+        let piece_right = piece.right();
 
-        if top < self.bounds.top() {
-            piece.add_position(vec2(0.0, self.bounds.top() - top));
+        if piece_top < self.bounds.top() {
+            piece.add_position(vec2(0.0, self.bounds.top() - piece_top));
         }
 
-        if left < self.bounds.left() {
-            piece.add_position(vec2(self.bounds.left() - left, 0.0));
+        if piece_left < self.bounds.left() {
+            piece.add_position(vec2(self.bounds.left() - piece_left, 0.0));
         }
 
-        if bottom > self.bounds.bottom() {
-            piece.add_position(vec2(0.0, self.bounds.bottom() - bottom));
+        if piece_bottom > self.bounds.bottom() {
+            piece.add_position(vec2(0.0, self.bounds.bottom() - piece_bottom));
         }
 
-        if right > self.bounds.right() {
-            piece.add_position(vec2(self.bounds.right() - right, 0.0));
+        if piece_right > self.bounds.right() {
+            piece.add_position(vec2(self.bounds.right() - piece_right, 0.0));
         }
     }
     pub fn clear_lines(&mut self) -> Option<usize> {
@@ -64,14 +64,7 @@ impl Board {
             self.bounds.y,
             self.bounds.w,
             self.bounds.h,
-            GRAY,
-        );
-        draw_rectangle(
-            self.bounds.x + SEGMENT_SIZE,
-            self.bounds.y + SEGMENT_SIZE,
-            self.bounds.w - SEGMENT_SIZE,
-            self.bounds.h - SEGMENT_SIZE,
-            GRAY,
+            LIGHTGRAY,
         );
 
         for piece in self.pieces.iter() {
