@@ -22,7 +22,7 @@ pub enum Shape {
 }
 
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Tetromino {
     position: Vec2, // center as shown in `SRS-pieces.webp`
     segments: [Square; 4],
@@ -117,7 +117,6 @@ impl Tetromino {
         }
     }
     pub fn random_at(x: f32, y: f32) -> Tetromino {
-        rand::srand(macroquad::miniquad::date::now() as _);
         match rand() % 7 {
             0 => Tetromino::new_I(x, y),
             1 => Tetromino::new_O(x, y),
