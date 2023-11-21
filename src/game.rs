@@ -1,4 +1,4 @@
-use macroquad::{math::vec2, input::{KeyCode, is_key_pressed}};
+use macroquad::{math::vec2, input::{KeyCode, is_key_pressed}, rand};
 
 use crate::{
     tetromino::{Tetromino, SEGMENT_SIZE},
@@ -15,6 +15,7 @@ pub struct Game {
 }
 impl std::default::Default for Game {
     fn default() -> Self {
+        rand::srand(macroquad::miniquad::date::now() as _);
         let mut game = Game {
             score: 0,
             is_over: false,
@@ -51,6 +52,18 @@ impl Game {
         
         self.board.keep_in_bounds(&mut self.current_piece);
         
+        if is_key_pressed(KeyCode::C) {
+            match self.held_piece.take() {
+                Some(held_piece) => {
+                    self.held_piece = Some(self.current_piece);
+                    self.current_piece = held_piece;
+                },
+                None => {
+                    self.held_piece = Some(self.current_piece);
+                    self.spawn_piece();
+                },
+            }
+        }
 
         self.board.draw();
         self.current_piece.draw();
