@@ -11,35 +11,12 @@ pub use tetromino::Tetromino;
 
 #[macroquad::main("tetrs")]
 async fn main() {
-    let mut board = Board::default();
-    let mut falling_piece = Tetromino::random();
-    let bounds = board.bounds();
-    let x_mid = (bounds.right() - bounds.left()) / 2.0;
-    falling_piece.add_position(vec2(bounds.left() + x_mid, bounds.top()));
-
+    let mut game = Game::default();
 
     loop {
         clear_background(BLACK);
 
-        if is_key_pressed(KeyCode::Left) {
-            falling_piece.move_left();
-        }
-        if is_key_pressed(KeyCode::Right) {
-            falling_piece.move_right();
-        }
-        if is_key_pressed(KeyCode::X) {
-            falling_piece.rotate(false);
-        }
-        if is_key_pressed(KeyCode::Z) {
-            falling_piece.rotate(true);
-        }
-
-        board.keep_in_bounds(&mut falling_piece);
-
-        board.draw();
-        falling_piece.draw();
-
-        falling_piece.move_down();
+        game.update();
 
         next_frame().await;
     }
