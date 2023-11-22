@@ -3,14 +3,19 @@ mod square;
 mod tetromino;
 mod board;
 
-use game::Game;
 use macroquad::{
     self,
     window::{
         clear_background,
-        next_frame},
-    color::{BLACK, RED}, input::{mouse_position, is_mouse_button_pressed, MouseButton}, text::draw_text
+        next_frame
+    },
+    color::{
+        BLACK,
+        RED
+    },
+    text::draw_text
 };
+use game::Game;
 
 #[macroquad::main("tetrs")]
 async fn main() {
@@ -18,10 +23,6 @@ async fn main() {
 
     loop {
         clear_background(BLACK);
-        let (mut mouse_x, mut mouse_y) = mouse_position();
-
-        let text = format!("Mouse: ({}, {})", mouse_x, mouse_y);
-        draw_text(&text, 20.0, 20.0, 20.0, RED);
 
         game.update();
 
