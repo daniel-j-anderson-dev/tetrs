@@ -61,7 +61,7 @@ impl Board {
             piece.add_position(vec2(self.bounds.right() - piece_right, 0.0));
         }
     }
-    pub fn clear_lines(&mut self) -> Option<usize> {
+    pub fn clear_lines(&mut self) -> usize {
         todo!();
     }
 
@@ -86,6 +86,12 @@ impl Board {
 }
 
 impl Board {
+    pub fn top_middle(&self) -> Vec2 {
+        vec2(
+            self.bounds.x + self.bounds.w / 2.0,
+            self.bounds.y + SEGMENT_SIZE
+        )
+    }
     pub fn bounds(&self) -> Rect {
         self.bounds
     }
