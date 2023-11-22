@@ -1,6 +1,21 @@
 use macroquad::{
-    prelude::*,
-    rand::{rand, RandomRange},
+    color::{
+        Color,
+        BLACK, BLUE, YELLOW, PURPLE, GREEN, RED, LIGHTGRAY, PINK,
+    },
+    math::{
+        Rect,
+        Vec2, vec2,
+    },
+    shapes::{
+        draw_rectangle,
+        draw_circle
+    },
+    window::{
+        screen_width,
+        screen_height,
+    },
+    rand::rand,
 };
 
 use crate::square::Square;
@@ -20,7 +35,61 @@ pub enum Shape {
     S,
     Z,
 }
+impl Shape {
+    pub fn segments(&self, position: Vec2) -> [Square; 4] {
+        let segment_0;
+        let segment_1;
+        let segment_2;
+        let segment_3;
+        
+        match self {
+            Shape::I => {
+                segment_0 = Square::new(position.x - 2.0 * SEGMENT_SIZE, position.y - 1.0 * SEGMENT_SIZE, SEGMENT_SIZE);
+                segment_1 = Square::new(segment_0.right(), segment_0.top(), SEGMENT_SIZE);
+                segment_2 = Square::new(segment_1.right(), segment_0.top(), SEGMENT_SIZE);
+                segment_3 = Square::new(segment_2.right(), segment_0.top(), SEGMENT_SIZE);
+            },
+            Shape::O => {
+                segment_0 = Square::new(position.x - 1.0 * SEGMENT_SIZE, position.y - 1.0 * SEGMENT_SIZE, SEGMENT_SIZE);
+                segment_1 = Square::new(segment_0.right(), segment_0.top(), SEGMENT_SIZE);
+                segment_2 = Square::new(segment_0.left(), segment_0.bottom(), SEGMENT_SIZE);
+                segment_3 = Square::new(segment_0.right(), segment_0.bottom(), SEGMENT_SIZE);
+            },
+            Shape::T => {
+                segment_0 = Square::new(position.x -0.5 * SEGMENT_SIZE, position.y -1.5 * SEGMENT_SIZE, SEGMENT_SIZE);
+                segment_1 = Square::new(segment_0.left(), segment_0.bottom(), SEGMENT_SIZE);
+                segment_2 = Square::new(segment_1.right(), segment_1.top(), SEGMENT_SIZE); 
+                segment_3 = Square::new(segment_1.left() - SEGMENT_SIZE,  segment_1.top(), SEGMENT_SIZE); 
+            },
+            Shape::J => {
+                segment_0 = Square::new(position.x -1.5 * SEGMENT_SIZE, position.y -1.5 * SEGMENT_SIZE, SEGMENT_SIZE); 
+                segment_1 = Square::new(segment_0.left(), segment_0.bottom(), SEGMENT_SIZE);
+                segment_2 = Square::new(segment_1.right(), segment_1.top(), SEGMENT_SIZE);
+                segment_3 = Square::new(segment_2.right(), segment_2.top(), SEGMENT_SIZE);
+            },
+            Shape::L => {
+                segment_0 = Square::new(position.x - 1.5 * SEGMENT_SIZE, position.y - 0.5 * SEGMENT_SIZE, SEGMENT_SIZE); 
+                segment_1 = Square::new(segment_0.right(), segment_0.top(),SEGMENT_SIZE);
+                segment_2 = Square::new(segment_1.right(), segment_1.top(), SEGMENT_SIZE);
+                segment_3 = Square::new(segment_2.left(), segment_2.top() - SEGMENT_SIZE, SEGMENT_SIZE); 
+            },
+            Shape::S => {
+                segment_0 = Square::new(position.x - 0.5 * SEGMENT_SIZE, position.y - 1.5 * SEGMENT_SIZE, SEGMENT_SIZE);
+                segment_1 = Square::new(segment_0.right(), segment_0.top(), SEGMENT_SIZE); 
+                segment_2 = Square::new(segment_0.left() - SEGMENT_SIZE, segment_0.bottom(), SEGMENT_SIZE); 
+                segment_3 = Square::new(segment_2.right(), segment_1.bottom(), SEGMENT_SIZE);
+            },
+            Shape::Z => {
+                segment_0 = Square::new(position.x - 1.5 * SEGMENT_SIZE, position.y - 1.5 * SEGMENT_SIZE, SEGMENT_SIZE); 
+                segment_1 = Square::new(segment_0.right(), segment_0.top(), SEGMENT_SIZE);
+                segment_2 = Square::new(segment_1.left(), segment_1.bottom(), SEGMENT_SIZE);
+                segment_3 = Square::new(segment_2.right(), segment_1.bottom(), SEGMENT_SIZE); 
+            },
+        }
 
+        [segment_0, segment_1, segment_2, segment_3]
+    }
+}
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Tetromino {
@@ -31,105 +100,69 @@ pub struct Tetromino {
 
 // constructors
 impl Tetromino {
-    pub fn new_I(x: f32, y: f32) -> Tetromino {
-        let segment_0 = Square::new(x -2.0 * SEGMENT_SIZE, y - SEGMENT_SIZE, SEGMENT_SIZE);
-        let segment_1 = Square::new(segment_0.right(), segment_0.top(), SEGMENT_SIZE);
-        let segment_2 = Square::new(segment_1.right(), segment_0.top(), SEGMENT_SIZE);
-        let segment_3 = Square::new(segment_2.right(), segment_0.top(), SEGMENT_SIZE);
-
+    pub fn new_I(position: Vec2) -> Tetromino {
         Tetromino {
+            position,
             shape: Shape::I,
-            position: vec2(x, y),
-            segments: [segment_0, segment_1, segment_2, segment_3],
+            segments: Shape::I.segments(position),
         }
     }
-    pub fn new_O(x: f32, y: f32) -> Tetromino {
-        let square_0 = Square::new(x - SEGMENT_SIZE, y - SEGMENT_SIZE, SEGMENT_SIZE);
-        let square_1 = Square::new(square_0.right(), square_0.top(), SEGMENT_SIZE);
-        let square_2 = Square::new(square_0.left(), square_0.bottom(), SEGMENT_SIZE);
-        let square_3 = Square::new(square_0.right(), square_0.bottom(), SEGMENT_SIZE);
-
+    pub fn new_O(position: Vec2) -> Tetromino {
         Tetromino {
+            position,
             shape: Shape::O,
-            position: vec2(x, y),
-            segments: [square_0, square_1, square_2, square_3],
+            segments: Shape::O.segments(position),
         }
     }
-    pub fn new_T(x: f32, y: f32) -> Tetromino {
-        let square_0 = Square::new(x -0.5 * SEGMENT_SIZE, y -1.5 * SEGMENT_SIZE, SEGMENT_SIZE);
-        let square_1 = Square::new(square_0.left(), square_0.bottom(), SEGMENT_SIZE);
-        let square_2 = Square::new(square_1.right(), square_1.top(), SEGMENT_SIZE); 
-        let square_3 = Square::new(square_1.left() - SEGMENT_SIZE,  square_1.top(), SEGMENT_SIZE); 
-
+    pub fn new_T(position: Vec2) -> Tetromino {
         Tetromino {
+            position,
             shape: Shape::T,
-            position: vec2(x, y),
-            segments: [square_0, square_1, square_2, square_3],
+            segments: Shape::T.segments(position),
         }
     }
-    pub fn new_J(x: f32, y: f32) -> Tetromino {
-        let square_0 = Square::new(x -1.5 * SEGMENT_SIZE, y -1.5 * SEGMENT_SIZE, SEGMENT_SIZE); 
-        let square_1 = Square::new(square_0.left(), square_0.bottom(), SEGMENT_SIZE);
-        let square_2 = Square::new(square_1.right(), square_1.top(), SEGMENT_SIZE);
-        let square_3 = Square::new(square_2.right(), square_2.top(), SEGMENT_SIZE);
-
+    pub fn new_J(position: Vec2) -> Tetromino {
         Tetromino {
+            position,
             shape: Shape::J,
-            position: vec2(x, y),
-            segments: [square_0, square_1, square_2, square_3],
+            segments: Shape::J.segments(position)
         }
     }
-    pub fn new_L(x: f32, y: f32) -> Tetromino {
-        let square_0 = Square::new(x - 1.5 * SEGMENT_SIZE, y - 0.5 * SEGMENT_SIZE, SEGMENT_SIZE); 
-        let square_1 = Square::new(square_0.right(), square_0.top(),SEGMENT_SIZE);
-        let square_2 = Square::new(square_1.right(), square_1.top(), SEGMENT_SIZE);
-        let square_3 = Square::new(square_2.left(), square_2.top() - SEGMENT_SIZE, SEGMENT_SIZE); 
-
+    pub fn new_L(position: Vec2) -> Tetromino {
         Tetromino { 
-            position: vec2(x, y),
-            segments: [square_0, square_1, square_2, square_3],
-            shape: Shape::L
+            position,
+            shape: Shape::L,
+            segments: Shape::L.segments(position),
         }
     }
-    pub fn new_S(x: f32, y: f32) -> Tetromino {
-        let square_0 = Square::new(x - 0.5 * SEGMENT_SIZE, y - 1.5 * SEGMENT_SIZE, SEGMENT_SIZE);
-        let square_1 = Square::new(square_0.right(), square_0.top(), SEGMENT_SIZE); 
-        let square_2 = Square::new(square_0.left() - SEGMENT_SIZE, square_0.bottom(), SEGMENT_SIZE); 
-        let square_3 = Square::new(square_2.right(), square_1.bottom(), SEGMENT_SIZE);
-
+    pub fn new_S(position: Vec2) -> Tetromino {
         Tetromino { 
-            position: vec2(x, y),
-            segments: [square_0, square_1, square_2, square_3],
+            position,
+            segments: Shape::S.segments(position),
             shape: Shape::S,
         }
     }
-    pub fn new_Z(x: f32, y: f32) -> Tetromino {
-        let square_0 = Square::new(x - 1.5 * SEGMENT_SIZE, y - 1.5 * SEGMENT_SIZE, SEGMENT_SIZE); 
-        let square_1 = Square::new(square_0.right(), square_0.top(), SEGMENT_SIZE);
-        let square_2 = Square::new(square_1.left(), square_1.bottom(), SEGMENT_SIZE);
-        let square_3 = Square::new(square_2.right(), square_1.bottom(), SEGMENT_SIZE); 
-
-
+    pub fn new_Z(position: Vec2) -> Tetromino {
         Tetromino {
+            position,
             shape: Shape::Z,
-            position: vec2(x, y),
-            segments: [square_0, square_1, square_2, square_3],
+            segments: Shape::Z.segments(position),
         }
     }
-    pub fn random_at(x: f32, y: f32) -> Tetromino {
+    pub fn random_at(position: Vec2) -> Tetromino {
         match rand() % 7 {
-            0 => Tetromino::new_I(x, y),
-            1 => Tetromino::new_O(x, y),
-            2 => Tetromino::new_T(x, y),
-            3 => Tetromino::new_J(x, y),
-            4 => Tetromino::new_L(x, y),
-            5 => Tetromino::new_S(x, y),
-            6 => Tetromino::new_Z(x, y),
-            _ => Tetromino::new_I(x, y),
+            0 => Tetromino::new_I(position),
+            1 => Tetromino::new_O(position),
+            2 => Tetromino::new_T(position),
+            3 => Tetromino::new_J(position),
+            4 => Tetromino::new_L(position),
+            5 => Tetromino::new_S(position),
+            6 => Tetromino::new_Z(position),
+            _ => Tetromino::new_I(position),
         }
     }
     pub fn random() -> Tetromino {
-        Tetromino::random_at(0.0, 0.0)
+        Tetromino::random_at(Vec2::ZERO)
     }
 }
 
@@ -191,12 +224,10 @@ impl Tetromino {
         }
         self.position += delta;
     }
+
     pub fn set_position(&mut self, position: Vec2) {
-        for square in self.segments.iter_mut() {
-            square.x += position.x;
-            square.y += position.y;
-        }
         self.position = position;
+        self.segments = self.shape.segments(position); // resets orientation
     }
 }
 
@@ -220,16 +251,16 @@ impl Tetromino {
         return false;
     }
     pub fn move_left(&mut self) {
-        self.add_position(vec2(-SEGMENT_SIZE, 0.0));
+        self.add_position(-Vec2::X * SEGMENT_SIZE);
     }
     pub fn move_right(&mut self) {
-        self.add_position(vec2(SEGMENT_SIZE, 0.0));
+        self.add_position(Vec2::X * SEGMENT_SIZE);
     }
     pub fn move_down(&mut self) {
-        self.add_position(vec2(0.0, SEGMENT_SIZE));
+        self.add_position(Vec2::Y * SEGMENT_SIZE);
     }
     pub fn move_up(&mut self) {
-        self.add_position(vec2(0.0, -SEGMENT_SIZE));
+        self.add_position(-Vec2::Y * SEGMENT_SIZE);
     }
     pub fn rotate(&mut self, clockwise: bool) {
         for square in self.segments.iter_mut() {
@@ -238,12 +269,8 @@ impl Tetromino {
                 square.y + 0.5 * SEGMENT_SIZE,
             );
 
-            let difference = segment_center - self.position; // account for position
-
-            let rotated = rotate_point(clockwise, difference);
+            let rotated = rotate_point(clockwise, segment_center - self.position) + self.position;
             
-            let rotated = rotated + self.position; // account for position
-
             // Update the square's position based on the new relative coordinates
             square.x = rotated.x - 0.5 * SEGMENT_SIZE;
             square.y = rotated.y - 0.5 * SEGMENT_SIZE;
@@ -289,13 +316,13 @@ impl Tetromino {
 pub fn all_shapes() -> [Tetromino; 7] {
     let origin = vec2(screen_width(), screen_height())/2.0;
 
-    let i = Tetromino::new_I(origin.x, origin.y);
-    let o = Tetromino::new_O(origin.x, origin.y);
-    let t = Tetromino::new_T(origin.x, origin.y);
-    let j = Tetromino::new_J(origin.x, origin.y);
-    let l = Tetromino::new_L(origin.x, origin.y);
-    let s = Tetromino::new_S(origin.x, origin.y);
-    let z = Tetromino::new_Z(origin.x, origin.y);
+    let i = Tetromino::new_I(origin);
+    let o = Tetromino::new_O(origin);
+    let t = Tetromino::new_T(origin);
+    let j = Tetromino::new_J(origin);
+    let l = Tetromino::new_L(origin);
+    let s = Tetromino::new_S(origin);
+    let z = Tetromino::new_Z(origin);
 
     [i, o, t, j, l, s, z]
 }
