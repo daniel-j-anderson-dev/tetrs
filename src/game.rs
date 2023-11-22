@@ -1,10 +1,31 @@
-use macroquad::{math::vec2, input::{KeyCode, is_key_pressed}, rand, shapes::draw_rectangle, color::{LIGHTGRAY, RED, GREEN}, text::{draw_text, measure_text}};
+use macroquad::{
+    math::{vec2, Rect},
+    input::{
+        KeyCode,
+        is_key_pressed
+    },
+    rand::srand,
+    shapes::draw_rectangle,
+    color::{
+        RED,
+        GRAY
+    },
+    text::{
+        draw_text,
+        measure_text
+    },
+    miniquad::date
+};
 
 use crate::{
-    tetromino::{Tetromino, SEGMENT_SIZE},
+    tetromino::{
+        Tetromino,
+        SEGMENT_SIZE, Shape
+    },
     board::Board
 };
 
+#[derive(Debug)]
 pub struct Game {
     score: u32,
     is_over: bool,
@@ -13,9 +34,20 @@ pub struct Game {
     held_piece: Option<Tetromino>,
     board: Board,
 }
+impl Game {
+    fn test_print(&self) {
+        println!("Current piece: {:?} at {}", self.current_piece.shape(), self.current_piece.position());
+        if let Some(held_piece) = self.held_piece {
+            println!("Held piece: {:?} at {}", held_piece.shape(), held_piece.position());
+        }
+        else {
+            println!("Nothing held");
+        }
+    }
+}
 impl std::default::Default for Game {
     fn default() -> Self {
-        rand::srand(macroquad::miniquad::date::now() as u64);
+        srand(date::now() as u64);
         Game {
             score: 0,
             is_over: false,
@@ -53,6 +85,10 @@ impl Game {
         self.draw_held_piece();
         self.current_piece.draw();
         
+        if is_key_pressed(KeyCode::Space) {
+            self.test_print();
+        }
+
         Ok(())
     }
     fn spawn_piece(&mut self) {
@@ -63,7 +99,10 @@ impl Game {
         self.current_piece.set_position(top_middle);
     }
     fn swap_held_piece(&mut self) {
-        self.current_piece.set_position(vec2(self.board.bounds().right() + 2.0 * SEGMENT_SIZE, self.board.bounds().top() + SEGMENT_SIZE / 2.0));
+        self.current_piece.set_position(vec2(
+            self.board.bounds().right() + 3.0 * SEGMENT_SIZE,
+            self.board.bounds().top() + 2.0 * SEGMENT_SIZE
+        ));
 
         match self.held_piece.take() {
             Some(held_piece) => {
@@ -77,19 +116,27 @@ impl Game {
         }
     }
     fn draw_held_piece(&self) {
-        draw_rectangle(
-            self.board.bounds().right() + SEGMENT_SIZE,
-            self.board.bounds().top(),
-            SEGMENT_SIZE * 4.0,
-            SEGMENT_SIZE * 4.0,
-            LIGHTGRAY,
-        );
+        let hold_box = Rect {
+            x: self.board.bounds().right() + SEGMENT_SIZE,
+            y: self.board.bounds().top(),
+            w: SEGMENT_SIZE * 4.0,
+            h: SEGMENT_SIZE * 4.0,
+        };
+
+        draw_rectangle( hold_box.x, hold_box.y, hold_box.w, hold_box.h, GRAY);
+
         if let Some(held_piece) = self.held_piece {
-            held_piece.draw();
+            held_piece.draw()
         } else {
             let text = "NOTHING HELD";
-            // let text_width = measure_text(text, font, font_size, font_scale)
-            draw_text("NOTHING HELD", self.board.bounds().right() + 2.0 * SEGMENT_SIZE, self.board.bounds().top() + 2.0 * SEGMENT_SIZE, 20.0, RED);
+            let text_dimensions = measure_text(text, None, 1, 15.0);
+            draw_text(
+                text,
+                hold_box.center().x - text_dimensions.width / 2.0,
+                hold_box.center().y,
+                15.0,
+                RED
+            );
         }
     }
 }
