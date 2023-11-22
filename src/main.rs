@@ -9,12 +9,9 @@ use macroquad::{
         clear_background,
         next_frame
     },
-    color::{
-        BLACK,
-        RED
-    },
-    text::draw_text
+    color::BLACK
 };
+
 use game::Game;
 
 #[macroquad::main("tetrs")]
