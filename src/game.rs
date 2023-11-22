@@ -1,5 +1,8 @@
 use macroquad::{
-    math::{vec2, Rect},
+    math::{
+        vec2,
+        Rect
+    },
     input::{
         KeyCode,
         is_key_pressed
@@ -20,7 +23,7 @@ use macroquad::{
 use crate::{
     tetromino::{
         Tetromino,
-        SEGMENT_SIZE, Shape
+        SEGMENT_SIZE,
     },
     board::Board
 };
@@ -92,11 +95,8 @@ impl Game {
         Ok(())
     }
     fn spawn_piece(&mut self) {
-        let bounds = self.board.bounds();
-        let top_middle = vec2((bounds.right() - bounds.left()) / 2.0, bounds.top() + SEGMENT_SIZE);
-
         self.current_piece = Tetromino::random();
-        self.current_piece.set_position(top_middle);
+        self.current_piece.set_position(self.board.top_middle());
     }
     fn swap_held_piece(&mut self) {
         self.current_piece.set_position(vec2(
@@ -108,6 +108,7 @@ impl Game {
             Some(held_piece) => {
                 self.held_piece = Some(self.current_piece);
                 self.current_piece = held_piece;
+                self.current_piece.set_position(self.board.top_middle());
             },
             None => {
                 self.held_piece = Some(self.current_piece);
