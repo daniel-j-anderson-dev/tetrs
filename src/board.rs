@@ -1,14 +1,25 @@
-use macroquad::{color::{Color, LIGHTGRAY, GRAY}, math::{Vec2,vec2, Rect}, window::{screen_width, screen_height}, input::is_key_pressed, miniquad::KeyCode, shapes::draw_rectangle};
+use macroquad::{
+    color::GRAY,
+    math::{
+        Rect,
+        Vec2, vec2,
+    },
+    shapes::draw_rectangle,
+    window::{
+        screen_width,
+        screen_height,
+    },
+};
 
-use crate::{Tetromino, tetromino::SEGMENT_SIZE};
+use crate::tetromino::{
+    Tetromino,
+    SEGMENT_SIZE
+};
 
 pub const BOARD_WIDTH: usize = 10;
 pub const BOARD_HEIGHT: usize = 20;
 
-fn center() -> Vec2 {
-    vec2(screen_width(), screen_height()) / 2.0
-}
-
+#[derive(Debug)]
 pub struct Board {
     pieces: Vec<Tetromino>,
     bounds: Rect,
@@ -64,7 +75,7 @@ impl Board {
             self.bounds.y,
             self.bounds.w,
             self.bounds.h,
-            LIGHTGRAY,
+            GRAY,
         );
 
         for piece in self.pieces.iter() {
