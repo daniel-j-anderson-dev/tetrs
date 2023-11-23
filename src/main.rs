@@ -21,7 +21,7 @@ async fn main() {
     loop {
         clear_background(BLACK);
 
-        game.update();
+        let _ = game.update();
 
         next_frame().await;
     }
