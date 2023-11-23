@@ -100,49 +100,49 @@ pub struct Tetromino {
 
 // constructors
 impl Tetromino {
-    pub fn new_I(position: Vec2) -> Tetromino {
+    pub fn new_i(position: Vec2) -> Tetromino {
         Tetromino {
             position,
             shape: Shape::I,
             segments: Shape::I.segments(position),
         }
     }
-    pub fn new_O(position: Vec2) -> Tetromino {
+    pub fn new_o(position: Vec2) -> Tetromino {
         Tetromino {
             position,
             shape: Shape::O,
             segments: Shape::O.segments(position),
         }
     }
-    pub fn new_T(position: Vec2) -> Tetromino {
+    pub fn new_t(position: Vec2) -> Tetromino {
         Tetromino {
             position,
             shape: Shape::T,
             segments: Shape::T.segments(position),
         }
     }
-    pub fn new_J(position: Vec2) -> Tetromino {
+    pub fn new_j(position: Vec2) -> Tetromino {
         Tetromino {
             position,
             shape: Shape::J,
             segments: Shape::J.segments(position)
         }
     }
-    pub fn new_L(position: Vec2) -> Tetromino {
+    pub fn new_l(position: Vec2) -> Tetromino {
         Tetromino { 
             position,
             shape: Shape::L,
             segments: Shape::L.segments(position),
         }
     }
-    pub fn new_S(position: Vec2) -> Tetromino {
+    pub fn new_s(position: Vec2) -> Tetromino {
         Tetromino { 
             position,
             segments: Shape::S.segments(position),
             shape: Shape::S,
         }
     }
-    pub fn new_Z(position: Vec2) -> Tetromino {
+    pub fn new_z(position: Vec2) -> Tetromino {
         Tetromino {
             position,
             shape: Shape::Z,
@@ -151,14 +151,14 @@ impl Tetromino {
     }
     pub fn random_at(position: Vec2) -> Tetromino {
         match rand() % 7 {
-            0 => Tetromino::new_I(position),
-            1 => Tetromino::new_O(position),
-            2 => Tetromino::new_T(position),
-            3 => Tetromino::new_J(position),
-            4 => Tetromino::new_L(position),
-            5 => Tetromino::new_S(position),
-            6 => Tetromino::new_Z(position),
-            _ => Tetromino::new_I(position),
+            0 => Tetromino::new_i(position),
+            1 => Tetromino::new_o(position),
+            2 => Tetromino::new_t(position),
+            3 => Tetromino::new_j(position),
+            4 => Tetromino::new_l(position),
+            5 => Tetromino::new_s(position),
+            6 => Tetromino::new_z(position),
+            _ => Tetromino::new_i(position),
         }
     }
     pub fn random() -> Tetromino {
@@ -316,13 +316,13 @@ impl Tetromino {
 pub fn all_shapes() -> [Tetromino; 7] {
     let origin = vec2(screen_width(), screen_height())/2.0;
 
-    let i = Tetromino::new_I(origin);
-    let o = Tetromino::new_O(origin);
-    let t = Tetromino::new_T(origin);
-    let j = Tetromino::new_J(origin);
-    let l = Tetromino::new_L(origin);
-    let s = Tetromino::new_S(origin);
-    let z = Tetromino::new_Z(origin);
+    let i = Tetromino::new_i(origin);
+    let o = Tetromino::new_o(origin);
+    let t = Tetromino::new_t(origin);
+    let j = Tetromino::new_j(origin);
+    let l = Tetromino::new_l(origin);
+    let s = Tetromino::new_s(origin);
+    let z = Tetromino::new_z(origin);
 
     [i, o, t, j, l, s, z]
 }
