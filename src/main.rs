@@ -9,7 +9,8 @@ use macroquad::{
         clear_background,
         next_frame
     },
-    color::BLACK
+    input::KeyCode,
+    color::BLACK, input::is_key_pressed
 };
 
 use game::Game;
@@ -22,6 +23,10 @@ async fn main() {
         clear_background(BLACK);
 
         let _ = game.update();
+
+        if is_key_pressed(KeyCode::Enter) {
+            game = Game::default();
+        }
 
         next_frame().await;
     }
