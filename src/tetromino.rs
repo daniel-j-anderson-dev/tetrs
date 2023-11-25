@@ -157,8 +157,7 @@ impl Tetromino {
             3 => Tetromino::new_j(position),
             4 => Tetromino::new_l(position),
             5 => Tetromino::new_s(position),
-            6 => Tetromino::new_z(position),
-            _ => Tetromino::new_i(position),
+            _ => Tetromino::new_z(position),
         }
     }
     pub fn random() -> Tetromino {
