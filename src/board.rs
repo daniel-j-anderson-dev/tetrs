@@ -46,19 +46,19 @@ impl Board {
         let piece_right = piece.right();
 
         if piece_top < self.bounds.top() {
-            piece.add_position(vec2(0.0, self.bounds.top() - piece_top));
+            piece.add_position(Vec2::Y * (self.bounds.top() - piece_top));
         }
 
         if piece_left < self.bounds.left() {
-            piece.add_position(vec2(self.bounds.left() - piece_left, 0.0));
+            piece.add_position(Vec2::X * (self.bounds.left() - piece_left));
         }
 
         if piece_bottom > self.bounds.bottom() {
-            piece.add_position(vec2(0.0, self.bounds.bottom() - piece_bottom));
+            piece.add_position(Vec2::Y * (self.bounds.bottom() - piece_bottom));
         }
 
         if piece_right > self.bounds.right() {
-            piece.add_position(vec2(self.bounds.right() - piece_right, 0.0));
+            piece.add_position(Vec2::X * (self.bounds.right() - piece_right));
         }
     }
     pub fn clear_lines(&mut self) -> usize {
