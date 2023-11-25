@@ -30,12 +30,13 @@ use crate::{
 
 #[derive(Debug)]
 pub struct Game {
-    score: u32,
+    score: usize,
     is_over: bool,
     current_piece: Tetromino,
     next_piece: Tetromino,
     held_piece: Option<Tetromino>,
     board: Board,
+    frame_count: usize
 }
 impl Game {
     fn test_print(&self) {
@@ -58,6 +59,7 @@ impl std::default::Default for Game {
             next_piece: Tetromino::random(),
             held_piece: None,
             board: Board::default(),
+            frame_count: 0,
         }
     }
 }
@@ -79,7 +81,9 @@ impl Game {
             self.swap_held_piece();
         }
 
-        self.current_piece.move_down();
+        if self.frame_count % 10 == 0 {
+            self.current_piece.move_down();
+        }
         
         self.board.keep_in_bounds(&mut self.current_piece);
         
@@ -90,6 +94,11 @@ impl Game {
         
         if is_key_pressed(KeyCode::Space) {
             self.test_print();
+        }
+
+        self.frame_count += 1;
+        if self.frame_count >= 60 {
+            self.frame_count = 0;
         }
 
         Ok(())
